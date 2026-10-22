@@ -213,6 +213,10 @@ def dashboard():
         .btn-success:hover {{ background: #2ea043; }}
         .btn-fail {{ background: #da3633; color: white; }}
         .btn-fail:hover {{ background: #f85149; }}
+        .nav {{ margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; }}
+        .nav a {{ background: #21262d; border: 1px solid #30363d; padding: 6px 12px; border-radius: 6px; color: #58a6ff; text-decoration: none; font-size: 13px; font-weight: 500; }}
+        .nav a:hover {{ background: #30363d; }}
+        .nav a.active {{ background: #1f6feb; color: white; border-color: #58a6ff; }}
         table {{ width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }}
         th, td {{ border: 1px solid #30363d; padding: 10px; text-align: left; }}
         th {{ background: #21262d; color: #8b949e; }}
@@ -222,6 +226,13 @@ def dashboard():
 </head>
 <body>
     <div class="container">
+        <div class="nav">
+            <a href="http://localhost:8001/" class="active">📦 Order Service (8001)</a>
+            <a href="http://localhost:8002/">💳 Payment Service (8002)</a>
+            <a href="http://localhost:8003/">🔔 Notification Service (8003)</a>
+            <a href="http://localhost:15672/" target="_blank">🐰 RabbitMQ UI (15672)</a>
+        </div>
+
         <div class="card">
             <h1>Паттерн Saga (Хореография событий) с RabbitMQ</h1>
             <p>Лабораторная работа №4 • Группа 8И42 • Довидович А. В. и Петрушенко Д. Е.</p>
