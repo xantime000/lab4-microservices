@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # 1. Брокер сообщений RabbitMQ с Management UI
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: lab4-rabbitmq
+    ports:
+      - "5672:5672"       # AMQP порт для клиентов
+      - "15672:15672"     # Web Management UI (guest / guest)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - lab4-network
+
+  # 2. Сервис заказов (Order Service)
+  order-service:
+    build:
+      context: .
+      dockerfile: order_service/Dockerfile
+    container_name: lab4-order-service
+    ports:
+      - "8001:8001"
+    environment:
+      - PORT=8001
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - lab4-network
+
+  # 3. Сервис оплаты (Payment Service)
+  payment-service:
+    build:
+      context: .
+      dockerfile: payment_service/Dockerfile
+    container_name: lab4-payment-service
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - lab4-network
+
+  # 4. Сервис уведомлений (Notification Service)
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification_service/Dockerfile
+    container_name: lab4-notification-service
+    ports:
+      - "8003:8003"
+    environment:
+      - PORT=8003
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - lab4-network
+
+networks:
+  lab4-network:
+    driver: bridge
